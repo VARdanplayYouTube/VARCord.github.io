@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyDiscord</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Страница авторизации -->
+    <div id="auth-page" class="page active">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>я какатьCord</h1>
+                    <p>Пожалуйста, войдите в свой аккаунт</p>
+                </div>
+                <form id="login-form">
+                    <div class="input-group">
+                        <input type="email" id="email" required>
+                        <label for="email">Email</label>
+                        <div class="input-error" id="email-error"></div>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="password" required minlength="3">
+                        <label for="password">Пароль</label>
+                        <div class="input-error" id="password-error"></div>
+                    </div>
+                    <button type="submit" class="auth-btn" id="login-btn">
+                        <span class="btn-text">Войти</span>
+                        <div class="btn-loader hidden">
+                            <div class="loader"></div>
+                        </div>
+                    </button>
+                </form>
+                <div class="auth-footer">
+                    <p>Нет аккаунта? <a href="#" id="register-link">Зарегистрироваться</a></p>
+                </div>
+                <div id="auth-message" class="auth-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основное приложение -->
+    <div id="app-page" class="page">
+        <div class="app-container">
+            <!-- Боковая панель серверов -->
+            <div class="servers-sidebar">
+                <div class="server-list" id="server-list">
+                    <!-- Серверы будут добавляться динамически -->
+                </div>
+                <button id="create-server-btn" class="add-server-btn" title="Добавить сервер">+</button>
+            </div>
+
+            <!-- Боковая панель каналов и друзей -->
+            <div class="channels-sidebar">
+                <!-- Вкладки -->
+                <div class="sidebar-tabs">
+                    <button class="tab-btn active" data-tab="servers">Серверы</button>
+                    <button class="tab-btn" data-tab="friends">Личные сообщения</button>
+                </div>
+
+                <!-- Контент серверов -->
+                <div id="servers-tab" class="tab-content active">
+                    <div class="server-header">
+                        <h3 id="current-server-name">Мой сервер</h3>
+                        <button id="create-channel-btn" class="icon-btn" title="Создать канал">+</button>
+                    </div>
+                    <div class="channels-list">
+                        <div class="channel-category">
+                            <div class="category-header">
+                                <h4>Текстовые каналы</h4>
+                            </div>
+                            <div class="channel-list" id="text-channels">
+                                <!-- Текстовые каналы -->
+                            </div>
+                        </div>
+                        <div class="channel-category">
+                            <div class="category-header">
+                                <h4>Голосовые каналы</h4>
+                            </div>
+                            <div class="channel-list" id="voice-channels">
+                                <!-- Голосовые каналы -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Контент личных сообщений -->
+                <div id="friends-tab" class="tab-content">
+                    <div class="friends-header">
+                        <h3>Личные сообщения</h3>
+                        <button id="add-friend-btn-sidebar" class="icon-btn" title="Добавить друга">+</button>
+                    </div>
+                    <div class="friends-list" id="friends-sidebar-list">
+                        <!-- Список друзей для личных сообщений -->
+                    </div>
+                </div>
+
+                <!-- Панель пользователя -->
+                <div class="user-panel">
+                    <div class="user-info">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                        <div class="user-details">
+                            <span id="username-display" class="username">Пользователь</span>
+                            <span class="user-status">Online</span>
+                        </div>
+                        <button id="logout-btn" class="logout-btn" title="Выйти">⏻</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Основная область чата -->
+            <div class="main-content">
+                <div class="chat-header">
+                    <div class="chat-info">
+                        <h3 id="current-channel-name">
+                            <span class="channel-icon">#</span>
+                            <span class="channel-text">general</span>
+                        </h3>
+                        <div id="chat-info" class="chat-details"></div>
+                    </div>
+                    <div class="call-controls">
+                        <button id="start-call-btn" class="call-btn">
+                            <span class="call-icon">📞</span>
+                            Начать звонок
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <div class="welcome-message">
+                        <div class="welcome-icon">👋</div>
+                        <h3>Добро пожаловать в #general!</h3>
+                        <p>Это начало канала #general</p>
+                    </div>
+                </div>
+                
+                <div class="message-input-container">
+                    <div class="message-input">
+                        <input type="text" id="message-input" placeholder="Напишите сообщение в #general...">
+                        <button id="send-message-btn" class="send-btn">
+                            <span class="send-icon">↑</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Панель участников -->
+            <div class="members-sidebar">
+                <div class="members-header">
+                    <h4>УЧАСТНИКИ</h4>
+                    <span class="members-count" id="members-count">—</span>
+                </div>
+                <div class="members-list" id="members-list">
+                    <!-- Список участников -->
+                </div>
+                <div class="friends-controls">
+                    <button id="add-friend-btn" class="friend-btn">
+                        <span class="btn-icon">+</span>
+                        Добавить друга
+                    </button>
+                    <button id="friends-list-btn" class="friend-btn">
+                        <span class="btn-icon">👥</span>
+                        Управление друзьями
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно регистрации -->
+    <div id="register-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <h3>Создать аккаунт</h3>
+            <form id="register-form">
+                <div class="input-group">
+                    <input type="text" id="register-username" required>
+                    <label for="register-username">Имя пользователя</label>
+                    <div class="input-error" id="username-error"></div>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="register-email" required>
+                    <label for="register-email">Email</label>
+                    <div class="input-error" id="register-email-error"></div>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="register-password" required minlength="3">
+                    <label for="register-password">Пароль</label>
+                    <div class="input-error" id="register-password-error"></div>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="register-confirm-password" required>
+                    <label for="register-confirm-password">Подтвердите пароль</label>
+                    <div class="input-error" id="confirm-password-error"></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary" id="register-btn">
+                        <span class="btn-text">Создать аккаунт</span>
+                        <div class="btn-loader hidden">
+                            <div class="loader"></div>
+                        </div>
+                    </button>
+                    <button type="button" class="btn-secondary cancel-btn">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    <div id="create-server-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <h3>Создать сервер</h3>
+            <div class="input-group">
+                <input type="text" id="server-name-input" placeholder=" " required>
+                <label for="server-name-input">Название сервера</label>
+            </div>
+            <div class="modal-actions">
+                <button id="confirm-create-server" class="btn-primary">Создать</button>
+                <button class="btn-secondary cancel-btn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="create-channel-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <h3>Создать канал</h3>
+            <div class="input-group">
+                <input type="text" id="channel-name-input" placeholder=" " required>
+                <label for="channel-name-input">Название канала</label>
+            </div>
+            <div class="input-group">
+                <select id="channel-type-select">
+                    <option value="text">Текстовый канал</option>
+                    <option value="voice">Голосовой канал</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="admin-only-checkbox">
+                <label for="admin-only-checkbox">Только для администраторов</label>
+            </div>
+            <div class="modal-actions">
+                <button id="confirm-create-channel" class="btn-primary">Создать</button>
+                <button class="btn-secondary cancel-btn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-friend-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <h3>Добавить друга</h3>
+            <div class="input-group">
+                <input type="email" id="friend-email-input" placeholder=" " required>
+                <label for="friend-email-input">Email друга</label>
+            </div>
+            <div class="modal-actions">
+                <button id="confirm-add-friend" class="btn-primary">Добавить</button>
+                <button class="btn-secondary cancel-btn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="friends-list-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <h3>Управление друзьями</h3>
+            <div class="friends-management" id="friends-list">
+                <!-- Список друзей -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary cancel-btn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Окно входящего звонка -->
+    <div id="incoming-call-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content call-modal">
+            <div class="call-modal-header">
+                <h3>Входящий звонок</h3>
+            </div>
+            <div class="call-modal-body">
+                <div class="caller-info">
+                    <div class="caller-avatar" id="caller-avatar">U</div>
+                    <div class="caller-name" id="caller-name">Пользователь</div>
+                    <div class="call-type" id="call-type">Видео звонок</div>
+                </div>
+            </div>
+            <div class="call-modal-actions">
+                <button id="accept-call-btn" class="btn-success">
+                    <span class="call-icon">📞</span>
+                    Принять
+                </button>
+                <button id="reject-call-btn" class="btn-danger">
+                    <span class="call-icon">📵</span>
+                    Отклонить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Окно активного звонка -->
+    <div id="call-window" class="call-window hidden">
+        <div class="call-header">
+            <h3>Звонок</h3>
+            <button id="end-call-btn" class="btn-danger">Завершить</button>
+        </div>
+        <div class="video-container">
+            <div class="video-wrapper">
+                <video id="local-video" autoplay muted></video>
+                <div class="video-label">Вы</div>
+            </div>
+            <div class="video-wrapper">
+                <video id="remote-video" autoplay></video>
+                <div class="video-label">Собеседник</div>
+            </div>
+        </div>
+        <div class="call-controls-panel">
+            <button id="toggle-mic-btn" class="call-control-btn">
+                <span class="control-icon">🎤</span>
+                <span class="control-text">Микрофон</span>
+            </button>
+            <button id="toggle-speaker-btn" class="call-control-btn">
+                <span class="control-icon">🔊</span>
+                <span class="control-text">Динамик</span>
+            </button>
+            <button id="screen-share-btn" class="call-control-btn">
+                <span class="control-icon">🖥️</span>
+                <span class="control-text">Экран</span>
+            </button>
+            <button id="toggle-camera-btn" class="call-control-btn">
+                <span class="control-icon">📹</span>
+                <span class="control-text">Камера</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
